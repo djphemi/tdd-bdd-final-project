@@ -1,17 +1,3 @@
-# Copyright 2016, 2023 John J. Rofrano. All Rights Reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-# https://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 """
 Test cases for Product Model
 
@@ -59,7 +45,7 @@ class TestProductModel(unittest.TestCase):
 
     def setUp(self):
         """This runs before each test"""
-        db.session.query(Product).delete()  # clean up the last tests
+        db.session.query(Product).delete()
         db.session.commit()
 
     def tearDown(self):
@@ -153,6 +139,18 @@ class TestProductModel(unittest.TestCase):
         self.assertEqual(found.count(), count)
         for product in found:
             self.assertEqual(product.name, name)
+    
+    def test_find_product(self):
+    """It should Find a Product by ID"""
+    products = ProductFactory.create_batch(5)
+    for product in products:
+        product.create()
+    logging.info("Testing find with id: %s", products[0].id)
+    found = Product.find(products[0].id)
+    self.assertIsNotNone(found)
+    self.assertEqual(found.id, products[0].id)
+    self.assertEqual(found.name, products[0].name)
+    self.assertEqual(found.description, products[0].description)
 
     def test_find_by_availability(self):
         """It should Find Products by Availability"""
@@ -177,12 +175,6 @@ class TestProductModel(unittest.TestCase):
         self.assertEqual(found.count(), count)
         for product in found:
             self.assertEqual(product.category, category)
-
-# Add to your imports at the top
-from service.models import Product, Category, DataValidationError, db
-
-class TestProductModel(unittest.TestCase):
-    # Your existing methods...
     
     def test_init_db(self):
         """Test that db is initialized properly"""
@@ -196,7 +188,7 @@ class TestProductModel(unittest.TestCase):
             "description": "Test Description",
             "price": "10.99",
             "available": True,
-            "category": "INVALID_CATEGORY"  # This category doesn't exist
+            "category": "INVALID_CATEGORY" 
         }
         self.assertRaises(DataValidationError, test_product.deserialize, data)
     
@@ -208,7 +200,7 @@ class TestProductModel(unittest.TestCase):
         product.create()
         
         # Find by UNKNOWN category (default)
-        products = Product.find_by_category()  # Default is UNKNOWN
+        products = Product.find_by_category() 
         self.assertGreater(products.count(), 0)
         self.assertEqual(products.first().category, Category.UNKNOWN)
     

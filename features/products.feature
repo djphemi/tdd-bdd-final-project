@@ -3,6 +3,7 @@ Feature: The product store service back-end
     I need a RESTful catalog service
     So that I can keep track of all my products
 
+
 Background:
     Given the following products
         | name       | description     | price   | available | category   |
